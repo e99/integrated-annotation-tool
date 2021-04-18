@@ -10,6 +10,7 @@ import android.view.*
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import java.util.*
+import e99co.e99.integratedannotationtool.CanvasView
 
 const val IMAGE_ID="image id"
 var imageTitleList = arrayListOf<AnnotationImage>(
@@ -26,14 +27,14 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        /*
-        val graphicView=findViewById(R.id.image_canvas)
-        setContentView(MyGraphicView(this))
-        */
+        //setContentView(MyGraphicView(this))
+        //setContentView(CanvasView(this))
 
         val imagetitleAdapter = ImageTitleAdapter(this, imageTitleList)
         val image_title_list = findViewById<ListView>(R.id.image_title_list)
         val imageCanvas = findViewById<ImageView>(R.id.image_canvas)
+        val Canvas1=findViewById<CanvasView>(R.id.canvas_view)
+
         image_title_list.adapter = imagetitleAdapter
         image_title_list.onItemClickListener = AdapterView.OnItemClickListener { parent, view, i, l ->
             val selectedItemText = parent.getItemIdAtPosition(i)
