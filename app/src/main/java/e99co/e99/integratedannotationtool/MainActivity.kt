@@ -6,11 +6,18 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.os.Bundle
+import android.os.SystemClock
+import android.util.Log
 import android.view.*
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import java.util.*
 import e99co.e99.integratedannotationtool.CanvasView
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlin.concurrent.thread
 
 const val IMAGE_ID="image id"
 var imageTitleList = arrayListOf<AnnotationImage>(
@@ -23,24 +30,37 @@ class MainActivity : AppCompatActivity() {
     //    private val annotationImageListViewModel by viewModels<annotationImageListViewModel> {
 //        annotationImageListViewModelFactory(this)
 //    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         //setContentView(MyGraphicView(this))
         //setContentView(CanvasView(this))
+        val Canvas1=findViewById<CanvasView>(R.id.canvas_view)
 
         val imagetitleAdapter = ImageTitleAdapter(this, imageTitleList)
+        val annotationlistAdapter=AnnotationAdapter(this,Canvas1.annotations)
         val image_title_list = findViewById<ListView>(R.id.image_title_list)
+        val annotation_list = findViewById<ListView>(R.id.annotation_list)
         val imageCanvas = findViewById<ImageView>(R.id.image_canvas)
-        val Canvas1=findViewById<CanvasView>(R.id.canvas_view)
+        val btnRefresh=findViewById<ImageView>(R.id.button_refresh)
+
+        
 
         image_title_list.adapter = imagetitleAdapter
         image_title_list.onItemClickListener = AdapterView.OnItemClickListener { parent, view, i, l ->
             val selectedItemText = parent.getItemIdAtPosition(i)
             imageCanvas.setImageResource(imageTitleList[i].image)
         }
+
+        annotation_list.adapter=annotationlistAdapter
+
+        btnRefresh.setOnClickListener{
+            annotationlistAdapter.notifyDataSetChanged()
+        }
     }
+
 /*
     override fun onCreateOptionsMenu(menu: Menu?): Boolean { // 자바코드에서 메뉴를 구성하는 것. 지난 시간에는
         // layout에서 menu 디렉토리를 생성해서 만들었는데 코드로 만들어보자!!
@@ -280,18 +300,14 @@ public class MyShape{
     var size = 0
 }
 
-class ImageTitleAdapter (val context: Context, val dogList: ArrayList<AnnotationImage>) : BaseAdapter() {
+class ImageTitleAdapter (val context: Context, val ImageTitleList: ArrayList<AnnotationImage>) : BaseAdapter() {
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
-        /* LayoutInflater는 item을 Adapter에서 사용할 View로 부풀려주는(inflate) 역할을 한다. */
         val view: View = LayoutInflater.from(context).inflate(R.layout.image_title_item, null)
 
-        /* 위에서 생성된 view를 res-layout-main_lv_item.xml 파일의 각 View와 연결하는 과정이다. */
         val thumbnailPhoto = view.findViewById<ImageView>(R.id.thumbnail_image)
         val imageTitleItem = view.findViewById<TextView>(R.id.image_title)
 
-        /* ArrayList<Dog>의 변수 dog의 이미지와 데이터를 ImageView와 TextView에 담는다. */
-        val imagetitle = imageTitleList[position]
-        //val resourceId = context.resources.getIdentifier(imagetitle.image, "drawable", context.packageName)
+        val imagetitle = ImageTitleList[position]
         thumbnailPhoto.setImageResource(imagetitle.image)
         imageTitleItem.text = imagetitle.name
 
@@ -299,7 +315,7 @@ class ImageTitleAdapter (val context: Context, val dogList: ArrayList<Annotation
     }
 
     override fun getItem(position: Int): Any {
-        return imageTitleList[position]
+        return ImageTitleList[position]
     }
 
     override fun getItemId(position: Int): Long {
@@ -307,6 +323,41 @@ class ImageTitleAdapter (val context: Context, val dogList: ArrayList<Annotation
     }
 
     override fun getCount(): Int {
-        return imageTitleList.size
+        return ImageTitleList.size
+    }
+}
+
+class AnnotationAdapter (val context: Context, private val annotationList: ArrayList<AnnotationData>) : BaseAdapter() {
+    override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
+        val view: View = LayoutInflater.from(context).inflate(R.layout.annotation_item, null)
+
+        val annotationId = view.findViewById<TextView>(R.id.annotation_id)
+        val annotationLabel = view.findViewById<TextView>(R.id.annotation_label)
+        val annotationStartX = view.findViewById<TextView>(R.id.annotation_startX)
+        val annotationStartY = view.findViewById<TextView>(R.id.annotation_startY)
+        val annotationStopX = view.findViewById<TextView>(R.id.annotation_stopX)
+        val annotationStopY = view.findViewById<TextView>(R.id.annotation_stopY)
+
+        val annotation=annotationList[position]
+
+        annotationId.text= annotation.id.toString()
+        annotationLabel.text= annotation.label
+        annotationStartX.text= annotation.startX.toString()
+        annotationStartY.text= annotation.stopY.toString()
+        annotationStopX.text= annotation.stopX.toString()
+        annotationStopY.text= annotation.stopY.toString()
+        return view
+    }
+
+    override fun getItem(position: Int): Any {
+        return annotationList[position]
+    }
+
+    override fun getItemId(position: Int): Long {
+        return 0
+    }
+
+    override fun getCount(): Int {
+        return annotationList.size
     }
 }

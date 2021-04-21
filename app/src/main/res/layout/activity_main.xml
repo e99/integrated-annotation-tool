@@ -83,15 +83,26 @@
         app:layout_constraintHorizontal_bias="0.95"
         app:layout_constraintVertical_bias="0.6">
 
-        <androidx.recyclerview.widget.RecyclerView
+<!--        <androidx.recyclerview.widget.RecyclerView-->
+<!--            android:layout_width="450dp"-->
+<!--            android:layout_height="300dp"-->
+<!--            android:background="@drawable/borderline"-->
+<!--            app:layout_constraintBottom_toBottomOf="parent"-->
+<!--            app:layout_constraintLeft_toLeftOf="parent"-->
+<!--            app:layout_constraintRight_toRightOf="parent"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toTopOf="parent"/>-->
+
+        <ListView
+            android:id="@+id/annotation_list"
             android:layout_width="450dp"
-            android:layout_height="300dp"
-            android:background="@drawable/borderline"
+            android:layout_height="200dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
+            app:layout_constraintTop_toTopOf="parent"
+            android:background="@drawable/borderline"
+            />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -108,6 +119,7 @@
         android:background="@drawable/borderline">
 
         <ImageView
+            android:id="@+id/button_refresh"
             android:layout_width="80dp"
             android:layout_height="80dp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -115,7 +127,7 @@
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintHorizontal_bias="0.02"
-            android:src="@drawable/ic_baseline_add_photo_alternate_24"
+            android:src="@drawable/refresh"
             android:background="@drawable/borderline"/>
 
         <ImageView
