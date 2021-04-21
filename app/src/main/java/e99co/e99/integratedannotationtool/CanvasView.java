@@ -33,15 +33,11 @@ public class CanvasView extends View {
 
         paint.setColor(Color.RED);
 
-        //STROKE속성을 이용하여 테두리...선...
-        paint.setStyle(Paint.Style.STROKE);
-
+        paint.setStyle(Paint.Style.FILL_AND_STROKE);
+        paint.setAlpha(50);
         //두께
         paint.setStrokeWidth(6);
 
-
-        //path객체가 가지고 있는 경로를 화면에 그린다...
-        //canvas.drawPath(path,paint);
         Log.i(TAG, "startX: "+startX+"startY: "+startY);
         canvas.drawRect((float)startX,(float)startY,(float)stopX,(float)stopY,paint);
 
