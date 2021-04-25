@@ -12,6 +12,7 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.ListView
 
+
 class CanvasView(context: Context?, attr: AttributeSet?) :
     View(context, attr) {
     private val paint = Paint() // 버퍼
