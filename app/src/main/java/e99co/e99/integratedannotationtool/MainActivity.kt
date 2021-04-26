@@ -1,8 +1,10 @@
 package e99co.e99.integratedannotationtool
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.ContentValues
 import android.content.Context
+import android.content.Intent
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
@@ -20,6 +22,9 @@ import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.concurrent.thread
+import e99co.e99.integratedannotationtool.AnnotationData
+import org.jetbrains.annotations.NotNull
+
 
 const val IMAGE_ID="image id"
 var imageTitleList = arrayListOf<AnnotationImage>(
@@ -33,16 +38,20 @@ class MainActivity : AppCompatActivity() {
 //        annotationImageListViewModelFactory(this)
 //    }
 
+    companion object { // 동반 객체, 자바의 static 역할.
+        var annotations: ArrayList<AnnotationData> = ArrayList()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val Canvas1=findViewById<CanvasView>(R.id.canvas_view)
-
         val imagetitleAdapter = ImageTitleAdapter(this, imageTitleList)
-        val annotationlistAdapter=AnnotationAdapter(this,Canvas1.annotations)
+        val Canvas1=findViewById<CanvasView>(R.id.canvas_view)
+        val annotationlistAdapter=AnnotationAdapter(this,annotations)
+        val annotation_list = findViewById<ListView>(R.id.annotation_list_layout)
         val image_title_list = findViewById<ListView>(R.id.image_title_list)
-        val annotation_list = findViewById<ListView>(R.id.annotation_list)
+
         val imageCanvas = findViewById<ImageView>(R.id.image_canvas)
         val btnRefresh=findViewById<ImageView>(R.id.button_refresh)
 
@@ -55,12 +64,23 @@ class MainActivity : AppCompatActivity() {
         }
 
         annotation_list.adapter=annotationlistAdapter
-
+        annotation_list.onItemClickListener =  AdapterView.OnItemClickListener{ parent, view, i, l ->
+            val addLabelIntent= Intent(this,AddClassActivity::class.java)
+            startActivity(addLabelIntent)
+            val intent=getIntent()
+            if(intent.hasExtra("label_text")){
+                val labeltext = intent.getStringExtra("label_text")
+                Log.i("labeltext",labeltext)
+                annotations[i].label=labeltext
+            }
+            else{
+                Log.i("intent","intent empty")
+            }
+        }
         btnRefresh.setOnClickListener{
             annotationlistAdapter.notifyDataSetChanged()
         }
     }
-
 }
 
 /*
@@ -118,6 +138,7 @@ class AnnotationAdapter (val context: Context, private val annotationList: Array
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
         val view: View = LayoutInflater.from(context).inflate(R.layout.annotation_item, null)
 
+
         val annotationId = view.findViewById<TextView>(R.id.annotation_id)
         val annotationLabel = view.findViewById<TextView>(R.id.annotation_label)
         val annotationStartX = view.findViewById<TextView>(R.id.annotation_startX)
@@ -134,7 +155,10 @@ class AnnotationAdapter (val context: Context, private val annotationList: Array
         annotationStopX.text= annotation.stopX.toString()
         annotationStopY.text= annotation.stopY.toString()
         return view
+
     }
+
+
 
     override fun getItem(position: Int): Any {
         return annotationList[position]
@@ -148,3 +172,4 @@ class AnnotationAdapter (val context: Context, private val annotationList: Array
         return annotationList.size
     }
 }
+

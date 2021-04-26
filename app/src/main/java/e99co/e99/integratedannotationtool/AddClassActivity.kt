@@ -3,14 +3,13 @@ package e99co.e99.integratedannotationtool
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
-import e99co.e99.integratedannotationtool.R
 import com.google.android.material.textfield.TextInputEditText
 
-const val Label_NAME = "name"
 
-class AddFlowerActivity : AppCompatActivity() {
+class AddClassActivity : AppCompatActivity() {
     private lateinit var addLabelName: TextInputEditText
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,7 +33,7 @@ class AddFlowerActivity : AppCompatActivity() {
             setResult(Activity.RESULT_CANCELED, resultIntent)
         } else {
             val name = addLabelName.text.toString()
-            resultIntent.putExtra(Label_NAME, name)
+            resultIntent.putExtra("label_text", name)
             setResult(Activity.RESULT_OK, resultIntent)
         }
         finish()

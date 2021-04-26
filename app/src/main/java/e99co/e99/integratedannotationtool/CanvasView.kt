@@ -2,15 +2,21 @@ package e99co.e99.integratedannotationtool
 
 import android.content.ContentValues
 import android.content.Context
+import android.content.Intent
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.util.AttributeSet
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
+import android.view.ViewGroup
+import android.widget.BaseAdapter
 import android.widget.ImageView
 import android.widget.ListView
+import android.widget.TextView
+import e99co.e99.integratedannotationtool.MainActivity.Companion.annotations
 
 
 class CanvasView(context: Context?, attr: AttributeSet?) :
@@ -21,7 +27,7 @@ class CanvasView(context: Context?, attr: AttributeSet?) :
     private var startY = 0
     private var stopX = 0
     private var stopY = 0
-    var annotations: ArrayList<AnnotationData> = ArrayList()
+
 
 
 
@@ -46,6 +52,9 @@ class CanvasView(context: Context?, attr: AttributeSet?) :
         for (i in annotations.indices){
             canvas.drawRect(annotations[i].startX.toFloat(),annotations[i].startY.toFloat(),annotations[i].stopX.toFloat(),annotations[i].stopY.toFloat(),paint)
         }
+
+
+
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
@@ -62,12 +71,7 @@ class CanvasView(context: Context?, attr: AttributeSet?) :
             }
             MotionEvent.ACTION_UP -> {
                 invalidate()
-                val annotation=AnnotationData()
-                annotation.startX=this.startX
-                annotation.startY=this.startY
-                annotation.stopX=this.stopX
-                annotation.stopY=this.stopY
-                annotation.id=annotations.size+1
+                val annotation=AnnotationData(annotations.size+1,"not selected",this.startX,this.startY,this.stopX,this.stopY)
                 annotations.add(annotation)
             }
         }
