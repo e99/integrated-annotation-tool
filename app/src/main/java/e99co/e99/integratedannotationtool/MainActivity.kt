@@ -40,6 +40,7 @@ class MainActivity : AppCompatActivity() {
 
     companion object { // 동반 객체, 자바의 static 역할.
         var annotations: ArrayList<AnnotationData> = ArrayList()
+        var key:Int=0
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -65,20 +66,28 @@ class MainActivity : AppCompatActivity() {
 
         annotation_list.adapter=annotationlistAdapter
         annotation_list.onItemClickListener =  AdapterView.OnItemClickListener{ parent, view, i, l ->
-            val addLabelIntent= Intent(this,AddClassActivity::class.java)
-            startActivity(addLabelIntent)
-            val intent=getIntent()
-            if(intent.hasExtra("label_text")){
-                val labeltext = intent.getStringExtra("label_text")
-                Log.i("labeltext",labeltext)
-                annotations[i].label=labeltext
-            }
-            else{
-                Log.i("intent","intent empty")
-            }
+            val intent= Intent(this,AddClassActivity::class.java)
+            startActivityForResult(intent,100)
+            key=i
         }
         btnRefresh.setOnClickListener{
             annotationlistAdapter.notifyDataSetChanged()
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, intentData: Intent?) {
+        super.onActivityResult(requestCode, resultCode, intentData)
+
+        /* Inserts flower into viewModel. */
+        if (requestCode == 100 && resultCode == Activity.RESULT_OK) {
+            intentData?.let { data ->
+                val label_name = data.getStringExtra("label_text")
+                var ad=annotations.get(key)
+                var addd=AnnotationData(ad.id,label_name,ad.startX,ad.startY,ad.stopX,ad.stopY)
+                annotations.remove(ad)
+                annotations.add(addd)
+                Log.i("intent",label_name)
+            }
         }
     }
 }
