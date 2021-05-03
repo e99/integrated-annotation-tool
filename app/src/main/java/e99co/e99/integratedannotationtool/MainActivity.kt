@@ -24,13 +24,20 @@ import kotlinx.coroutines.launch
 import kotlin.concurrent.thread
 import e99co.e99.integratedannotationtool.AnnotationData
 import org.jetbrains.annotations.NotNull
+import kotlin.collections.ArrayList
 
 
 const val IMAGE_ID="image id"
 var imageTitleList = arrayListOf<AnnotationImage>(
-        AnnotationImage(1,"image number 01.jpg",R.drawable.car,"01 image"),
-        AnnotationImage(2,"image number 02.jpg",R.drawable.dog,"02 image"),
-        AnnotationImage(3,"image number 03.jpg",R.drawable.person,"03 image")
+    AnnotationImage(1,"image number 01.jpg",R.drawable.car,"01 image"),
+    AnnotationImage(2,"image number 02.jpg",R.drawable.dog,"02 image"),
+    AnnotationImage(3,"image number 03.jpg",R.drawable.person,"03 image"),
+    AnnotationImage(1,"image number 01.jpg",R.drawable.car,"01 image"),
+    AnnotationImage(2,"image number 02.jpg",R.drawable.dog,"02 image"),
+    AnnotationImage(3,"image number 03.jpg",R.drawable.person,"03 image"),
+    AnnotationImage(1,"image number 01image number 01image number 01.jpg",R.drawable.car,"01 image"),
+    AnnotationImage(2,"image number 02.jpg",R.drawable.dog,"02 image"),
+    AnnotationImage(3,"image number 03.jpg",R.drawable.person,"03 image")
 )
 
 class MainActivity : AppCompatActivity() {
@@ -40,6 +47,7 @@ class MainActivity : AppCompatActivity() {
 
     companion object { // 동반 객체, 자바의 static 역할.
         var annotations: ArrayList<AnnotationData> = ArrayList()
+        var TagList: ArrayList<String> = ArrayList()
         var key:Int=0
     }
 
@@ -54,9 +62,9 @@ class MainActivity : AppCompatActivity() {
         val image_title_list = findViewById<ListView>(R.id.image_title_list)
 
         val imageCanvas = findViewById<ImageView>(R.id.image_canvas)
-        val btnRefresh=findViewById<ImageView>(R.id.button_refresh)
 
-        
+        val addTagButton = findViewById<ImageView>(R.id.add_tag_button)
+        val searchIcon = findViewById<ImageView>(R.id.search_button)
 
         image_title_list.adapter = imagetitleAdapter
         image_title_list.onItemClickListener = AdapterView.OnItemClickListener { parent, view, i, l ->
@@ -70,8 +78,13 @@ class MainActivity : AppCompatActivity() {
             startActivityForResult(intent,100)
             key=i
         }
-        btnRefresh.setOnClickListener{
+        searchIcon.setOnClickListener{
+
             annotationlistAdapter.notifyDataSetChanged()
+        }
+
+        addTagButton.setOnClickListener{
+
         }
     }
 
@@ -164,10 +177,7 @@ class AnnotationAdapter (val context: Context, private val annotationList: Array
         annotationStopX.text= annotation.stopX.toString()
         annotationStopY.text= annotation.stopY.toString()
         return view
-
     }
-
-
 
     override fun getItem(position: Int): Any {
         return annotationList[position]
