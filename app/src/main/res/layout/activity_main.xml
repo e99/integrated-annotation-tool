@@ -99,19 +99,14 @@
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintRight_toLeftOf="@id/add_tag_button"
+                app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 android:src="@drawable/search"
              />
 
-            <ImageView
-                android:id="@+id/add_tag_button"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                android:src="@drawable/tag"/>
+
+
+
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -124,19 +119,39 @@
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@id/buttons">
 
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="274dp"
+                android:layout_height="26dp"
+                android:id="@+id/textfield"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                android:background="@color/white"
+                android:textColor="@color/black"
+                >
+
+            </com.google.android.material.textfield.TextInputEditText>
+
+            <ImageView
+                android:id="@+id/add_tag_button"
+                android:layout_width="26dp"
+                android:layout_height="26dp"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:src="@drawable/tag_black"
+                android:background="@color/white"/>
             <ListView
                 android:id="@+id/label_list"
                 android:layout_width="300dp"
-                android:layout_height="556dp"
+                android:layout_height="500dp"
                 android:background="@drawable/borderline"
-                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/textfield"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent" />
 
             <ListView
                 android:id="@+id/annotation_list_layout"
                 android:layout_width="300dp"
-                android:layout_height="120dp"
+                android:layout_height="150dp"
                 app:layout_constraintTop_toBottomOf="@id/label_list"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"

@@ -32,7 +32,7 @@ class CanvasView(context: Context?, attr: AttributeSet?) :
 
 
     override fun onDraw(canvas: Canvas) {
-
+        MainActivity.selected =-1
         paint.style = Paint.Style.STROKE
         paint.alpha = 50
         paint.strokeWidth = 6f
@@ -51,6 +51,7 @@ class CanvasView(context: Context?, attr: AttributeSet?) :
         )
         for (i in annotations.indices){
             canvas.drawRect(annotations[i].startX.toFloat(),annotations[i].startY.toFloat(),annotations[i].stopX.toFloat(),annotations[i].stopY.toFloat(),paint)
+            MainActivity.annotationlistAdapter.notifyDataSetChanged()
         }
 
 
