@@ -12,20 +12,11 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.textfield.TextInputEditText
+import e99co.e99.integratedannotationtool.MainActivity.Companion.currentImageId
 
 
 const val IMAGE_ID="image id"
-var imageTitleList = arrayListOf<AnnotationImage>(
-    AnnotationImage(1,"image number 01.jpg",R.drawable.car,"01 image"),
-    AnnotationImage(2,"image number 02.jpg",R.drawable.dog,"02 image"),
-    AnnotationImage(3,"image number 03.jpg",R.drawable.person,"03 image"),
-    AnnotationImage(1,"image number 01.jpg",R.drawable.car,"01 image"),
-    AnnotationImage(2,"image number 02.jpg",R.drawable.dog,"02 image"),
-    AnnotationImage(3,"image number 03.jpg",R.drawable.person,"03 image"),
-    AnnotationImage(1,"image number 01image number 01image number 01.jpg",R.drawable.car,"01 image"),
-    AnnotationImage(2,"image number 02.jpg",R.drawable.dog,"02 image"),
-    AnnotationImage(3,"image number 03.jpg",R.drawable.person,"03 image")
-)
+
 
 class MainActivity : AppCompatActivity() {
     //    private val annotationImageListViewModel by viewModels<annotationImageListViewModel> {
@@ -47,6 +38,18 @@ class MainActivity : AppCompatActivity() {
             return instance.applicationContext
         }
         lateinit var annotationlistAdapter: AnnotationAdapter
+        var currentImageId:Int=-1
+        var imageTitleList = arrayListOf<AnnotationImage>(
+                AnnotationImage(0,"image number 01.jpg",ArrayList<AnnotationData>(),R.drawable.car,"01 image"),
+                AnnotationImage(1,"image number 02.jpg",ArrayList<AnnotationData>(),R.drawable.dog,"02 image"),
+                AnnotationImage(2,"image number 03.jpg",ArrayList<AnnotationData>(),R.drawable.person,"03 image"),
+                AnnotationImage(3,"image number 04.jpg",ArrayList<AnnotationData>(),R.drawable.car,"01 image"),
+                AnnotationImage(4,"image number 05.jpg",ArrayList<AnnotationData>(),R.drawable.dog,"02 image"),
+                AnnotationImage(5,"image number 03.jpg",ArrayList<AnnotationData>(),R.drawable.person,"03 image"),
+                AnnotationImage(6,"image number 06image number 01image number 01.jpg",ArrayList<AnnotationData>(),R.drawable.car,"01 image"),
+                AnnotationImage(7,"image number 07.jpg",ArrayList<AnnotationData>(),R.drawable.dog,"02 image"),
+                AnnotationImage(8,"image number 08.jpg",ArrayList<AnnotationData>(),R.drawable.person,"03 image")
+        )
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -54,7 +57,6 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         val imm: InputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         val imagetitleAdapter = ImageTitleAdapter(this, imageTitleList)
-        val Canvas1=findViewById<CanvasView>(R.id.canvas_view)
         annotationlistAdapter=AnnotationAdapter(this,annotations)
         val annotation_list = findViewById<ListView>(R.id.annotation_list_layout)
         val image_title_list = findViewById<ListView>(R.id.image_title_list)
@@ -68,6 +70,12 @@ class MainActivity : AppCompatActivity() {
         image_title_list.onItemClickListener = AdapterView.OnItemClickListener { parent, view, i, l ->
             val selectedItemText = parent.getItemIdAtPosition(i)
             imageCanvas.setImageResource(imageTitleList[i].image)
+            currentImageId= imageTitleList[i].id.toInt()
+            if(imageTitleList[currentImageId].tags.isNotEmpty()){
+                for (j in imageTitleList[currentImageId].tags.indices){
+                    Log.i("image tag list","\n["+imageTitleList[currentImageId].tags[j].id.toString()+" "+imageTitleList[currentImageId].tags[j].startX.toString()+" "+imageTitleList[currentImageId].tags[j].startY.toString()+" "+imageTitleList[currentImageId].tags[j].stopX.toString()+" "+imageTitleList[currentImageId].tags[j].startY.toString()+"]")
+                }
+            }
         }
 
         annotation_list.adapter=annotationlistAdapter

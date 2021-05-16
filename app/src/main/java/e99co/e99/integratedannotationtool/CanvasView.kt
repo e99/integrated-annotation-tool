@@ -17,6 +17,8 @@ import android.widget.ImageView
 import android.widget.ListView
 import android.widget.TextView
 import e99co.e99.integratedannotationtool.MainActivity.Companion.annotations
+import e99co.e99.integratedannotationtool.MainActivity.Companion.currentImageId
+import e99co.e99.integratedannotationtool.MainActivity.Companion.imageTitleList
 
 
 class CanvasView(context: Context?, attr: AttributeSet?) :
@@ -39,8 +41,6 @@ class CanvasView(context: Context?, attr: AttributeSet?) :
         //두께
 
         paint.color = Color.RED // 여기에 나중에 AnnotationData 객체에서 label 받아와서 그리기 전에 paint 객체 변경 (아니면 각각 paint 객체 갖는게 나을까??)
-
-        Log.i(ContentValues.TAG, "startX: " + startX + "startY: " + startY)
 
         canvas.drawRect(
             startX.toFloat(),
@@ -74,6 +74,7 @@ class CanvasView(context: Context?, attr: AttributeSet?) :
                 invalidate()
                 val annotation=AnnotationData(annotations.size+1,"not selected",this.startX,this.startY,this.stopX,this.stopY)
                 annotations.add(annotation)
+                imageTitleList[currentImageId].tags.add(annotation)
             }
         }
 
