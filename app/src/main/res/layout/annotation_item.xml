@@ -4,7 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@drawable/borderline">
+    android:background="@drawable/borderline"
+    android:alpha="0.3">
 
     <TextView
         android:id="@+id/annotation_id"
@@ -17,7 +18,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        android:background="@drawable/borderline"/>
+        android:alpha="1"/>
 
     <TextView
         android:id="@+id/annotation_label"
@@ -30,7 +31,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toEndOf="@id/annotation_id"
-        android:background="@drawable/borderline"/>
+        android:alpha="1"/>
 
     <TextView
         android:id="@+id/annotation_startX"
@@ -43,7 +44,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toEndOf="@id/annotation_label"
-        android:background="@drawable/borderline"/>
+        android:alpha="1"/>
 
     <TextView
         android:id="@+id/annotation_startY"
@@ -55,8 +56,7 @@
         android:textAppearance="?attr/textAppearanceHeadline5"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toEndOf="@id/annotation_startX"
-        android:background="@drawable/borderline"/>
+        app:layout_constraintStart_toEndOf="@id/annotation_startX" />
 
     <TextView
         android:id="@+id/annotation_stopX"
@@ -69,7 +69,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toEndOf="@id/annotation_startY"
-        android:background="@drawable/borderline"/>
+        android:alpha="1"/>
 
     <TextView
         android:id="@+id/annotation_stopY"
@@ -82,6 +82,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toEndOf="@id/annotation_stopX"
-        android:background="@drawable/borderline"/>
+        android:alpha="1"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

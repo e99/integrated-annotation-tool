@@ -3,6 +3,8 @@ package e99co.e99.integratedannotationtool
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -11,7 +13,9 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.graphics.alpha
 import com.google.android.material.textfield.TextInputEditText
+import e99co.e99.integratedannotationtool.MainActivity.Companion.colorHash
 import e99co.e99.integratedannotationtool.MainActivity.Companion.currentImageId
 
 
@@ -29,7 +33,7 @@ class MainActivity : AppCompatActivity() {
 
     companion object { // 동반 객체, 자바의 static 역할.
         var annotations: ArrayList<AnnotationData> = ArrayList()
-        var LabelList: ArrayList<String> = ArrayList()
+        var LabelList: ArrayList<Pair<String,Int>> = ArrayList()
         var key:Int=0
         var selected=-1
 
@@ -50,6 +54,12 @@ class MainActivity : AppCompatActivity() {
                 AnnotationImage(7,"image number 07.jpg",ArrayList<AnnotationData>(),R.drawable.dog,"02 image"),
                 AnnotationImage(8,"image number 08.jpg",ArrayList<AnnotationData>(),R.drawable.person,"03 image")
         )
+
+        val colorList=arrayListOf<Int>(Color.argb(255,248,106,106),Color.argb(255,244,126,8),Color.argb(255,255,255,156),Color.argb(255,156,156,250),Color.argb(255,83,83,246),Color.argb(255,165,83,246))
+        val colorHash=HashMap<String,Int>()
+        var colorVar=0
+        var imageChanging=false
+        var searchHash=HashMap<String,ArrayList<Pair<Int,Int>>>()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -62,22 +72,31 @@ class MainActivity : AppCompatActivity() {
         val image_title_list = findViewById<ListView>(R.id.image_title_list)
         addLabelName = findViewById(R.id.textfield)
         val imageCanvas = findViewById<ImageView>(R.id.image_canvas)
-
+        val drawCanvas = findViewById<CanvasView>(R.id.canvas_view)
         val addTagButton = findViewById<ImageView>(R.id.add_tag_button)
         val searchIcon = findViewById<ImageView>(R.id.search_button)
 
+
+        if (imageTitleList.size != 0){
+            imageCanvas.setImageResource(imageTitleList[0].image)
+            currentImageId=0
+        }
         image_title_list.adapter = imagetitleAdapter
         image_title_list.onItemClickListener = AdapterView.OnItemClickListener { parent, view, i, l ->
             val selectedItemText = parent.getItemIdAtPosition(i)
             imageCanvas.setImageResource(imageTitleList[i].image)
             currentImageId= imageTitleList[i].id.toInt()
+            annotations.clear()
             if(imageTitleList[currentImageId].tags.isNotEmpty()){
-                for (j in imageTitleList[currentImageId].tags.indices){
-                    Log.i("image tag list","\n["+imageTitleList[currentImageId].tags[j].id.toString()+" "+imageTitleList[currentImageId].tags[j].startX.toString()+" "+imageTitleList[currentImageId].tags[j].startY.toString()+" "+imageTitleList[currentImageId].tags[j].stopX.toString()+" "+imageTitleList[currentImageId].tags[j].startY.toString()+"]")
+                for (j in imageTitleList[currentImageId].tags.indices) {
+                    annotations.add(imageTitleList[currentImageId].tags[j])
                 }
             }
+            annotationlistAdapter.notifyDataSetChanged()
+            imageChanging=true
+            drawCanvas.invalidate()
         }
-
+        colorHash.put("not selected", Color.GRAY)
         annotation_list.adapter=annotationlistAdapter
         annotation_list.onItemClickListener =  AdapterView.OnItemClickListener{ parent, view, i, l ->
             key=i
@@ -90,27 +109,47 @@ class MainActivity : AppCompatActivity() {
 
         labelListView.adapter=labellistAdapter
         labelListView.setOnItemClickListener { parent, view, position, id ->
-            val name = LabelList[position]
+            val name = LabelList[position].first
             if (selected!=-1){
                 var ad=annotations.get(key)
-                var addd=AnnotationData(ad.id,name,ad.startX,ad.startY,ad.stopX,ad.stopY)
+                var addd=AnnotationData(ad.id,name,ad.startX,ad.startY,ad.stopX,ad.stopY,colorHash.get(name)!!)
                 annotations.set(key,addd)
+                imageTitleList[currentImageId].tags.remove(ad)
+                imageTitleList[currentImageId].tags.add(addd)
+                var s=searchHash.get(name)
+                s!!.add(Pair(currentImageId,ad.id))
                 annotationlistAdapter.notifyDataSetChanged()
+                imageChanging=true
+                drawCanvas.invalidate()
             }
-
         }
+
         searchIcon.setOnClickListener{
             selected=-1
             annotationlistAdapter.notifyDataSetChanged()
+            Log.i("search hash",searchHash.toString())
         }
 
         addTagButton.setOnClickListener{
             if (addLabelName.text.isNullOrEmpty()) {
                 Toast.makeText(this,"라벨 이름이 비어있습니다.",Toast.LENGTH_SHORT)
             } else {
+                var Flag=true
                 val name = addLabelName.text.toString()
-                LabelList.add(name)
-                labellistAdapter.notifyDataSetChanged()
+                for (i in LabelList.indices){
+                    if(name== LabelList[i].first){
+                        Flag=false
+                    }
+                }
+                if (Flag){
+                    searchHash.put(name,ArrayList<Pair<Int,Int>>())
+                    LabelList.add(Pair(name,colorList[colorVar%6]))
+                    colorHash.put(name,colorList[colorVar%6])
+                    labellistAdapter.notifyDataSetChanged()
+                    colorVar+=1
+                    addLabelName.setText(null)
+                    imm.hideSoftInputFromWindow(addLabelName.windowToken,0)
+                }
                 addLabelName.setText(null)
                 imm.hideSoftInputFromWindow(addLabelName.windowToken,0)
             }
@@ -132,13 +171,14 @@ class MainActivity : AppCompatActivity() {
     }
 }
 
-class LabelListAdapter (val context: Context, private val labelListAdapter: ArrayList<String>) : BaseAdapter() {
+class LabelListAdapter (val context: Context, private val labelListAdapter: ArrayList<Pair<String,Int>>) : BaseAdapter() {
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
         val view: View = LayoutInflater.from(context).inflate(R.layout.tag_item, null)
-
+        val labelColorView = view.findViewById<View>(R.id.label_color)
         val tagNameText = view.findViewById<TextView>(R.id.tag_name)
-        val name= labelListAdapter[position]
-        tagNameText.text=name
+        val item= labelListAdapter[position]
+        tagNameText.text=item.first
+        labelColorView.setBackgroundColor(item.second)
         return view
 
     }
@@ -220,7 +260,8 @@ class AnnotationAdapter (val context: Context, private val annotationList: Array
         val annotationStopY = view.findViewById<TextView>(R.id.annotation_stopY)
 
         val annotation=annotationList[position]
-
+        var alphaColor=colorHash.get(annotation.label)!!
+        view.setBackgroundColor(colorHash.get(annotation.label)!!)
         annotationId.text= annotation.id.toString()
         annotationLabel.text= annotation.label
         annotationStartX.text= annotation.startX.toString()
