@@ -91,16 +91,26 @@
             app:layout_constraintRight_toRightOf="parent"
             android:background="#0A0A0A"
             >
-            <ImageView
-                android:id="@+id/remove_button"
 
-                android:layout_width="24dp"
-                android:layout_height="24dp"
+            <ImageView
+                android:id="@+id/label_remove_button"
+
+                android:layout_width="11dp"
+                android:layout_height="19dp"
+                android:src="@drawable/minus"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintRight_toLeftOf="@id/tag_remove_button"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/tag_remove_button"
+
+                android:layout_width="11dp"
+                android:layout_height="19dp"
+                android:src="@drawable/minus"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintRight_toLeftOf="@id/search_button"
-                app:layout_constraintTop_toTopOf="parent"
-                android:src="@drawable/minus"
-                />
+                app:layout_constraintTop_toTopOf="parent" />
 
             <ImageView
                 android:id="@+id/search_button"

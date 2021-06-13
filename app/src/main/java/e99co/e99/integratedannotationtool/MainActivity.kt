@@ -43,6 +43,8 @@ class MainActivity : AppCompatActivity() {
         }
         lateinit var annotationlistAdapter: AnnotationAdapter
         var currentImageId:Int=-1
+        var currentTagId:Int=-1
+        var currentLabelId:Int=-1
         var imageTitleList = arrayListOf<AnnotationImage>(
                 AnnotationImage(0,"image number 01.jpg",ArrayList<AnnotationData>(),R.drawable.car,"01 image"),
                 AnnotationImage(1,"image number 02.jpg",ArrayList<AnnotationData>(),R.drawable.dog,"02 image"),
@@ -59,6 +61,7 @@ class MainActivity : AppCompatActivity() {
         val colorHash=HashMap<String,Int>()
         var colorVar=0
         var imageChanging=false
+        var tagRemoving=false
         var searchHash=HashMap<String,ArrayList<Pair<Int,Int>>>()
     }
 
@@ -74,6 +77,8 @@ class MainActivity : AppCompatActivity() {
         val imageCanvas = findViewById<ImageView>(R.id.image_canvas)
         val drawCanvas = findViewById<CanvasView>(R.id.canvas_view)
         val addTagButton = findViewById<ImageView>(R.id.add_tag_button)
+        val removeLabelButton = findViewById<ImageView>(R.id.label_remove_button)
+        val removeTagButton = findViewById<ImageView>(R.id.tag_remove_button)
         val searchIcon = findViewById<ImageView>(R.id.search_button)
 
 
@@ -83,6 +88,7 @@ class MainActivity : AppCompatActivity() {
         }
         image_title_list.adapter = imagetitleAdapter
         image_title_list.onItemClickListener = AdapterView.OnItemClickListener { parent, view, i, l ->
+            currentTagId=i
             val selectedItemText = parent.getItemIdAtPosition(i)
             imageCanvas.setImageResource(imageTitleList[i].image)
             currentImageId= imageTitleList[i].id.toInt()
@@ -101,6 +107,8 @@ class MainActivity : AppCompatActivity() {
         annotation_list.onItemClickListener =  AdapterView.OnItemClickListener{ parent, view, i, l ->
             key=i
             selected=i
+//            currentTagId=i
+
         }
 
         val labelListView=findViewById<ListView>(R.id.label_list)
@@ -109,6 +117,7 @@ class MainActivity : AppCompatActivity() {
 
         labelListView.adapter=labellistAdapter
         labelListView.setOnItemClickListener { parent, view, position, id ->
+            currentLabelId=position
             val name = LabelList[position].first
             if (selected!=-1){
                 var ad=annotations.get(key)
@@ -152,6 +161,32 @@ class MainActivity : AppCompatActivity() {
                 }
                 addLabelName.setText(null)
                 imm.hideSoftInputFromWindow(addLabelName.windowToken,0)
+            }
+        }
+        removeLabelButton.setOnClickListener {
+            if (currentLabelId!=-1){
+                var remove_list= searchHash.get(LabelList[currentLabelId].first)
+                Log.i("remove_list",remove_list.toString())
+                //searchHash 작업도 추가할 것
+                for (i in remove_list!!.indices){
+                    var remove_val=imageTitleList[remove_list[i].first].tags[remove_list[i].second]
+                    imageTitleList[remove_list[i].first].tags.remove(remove_val)
+                }
+            }
+        }
+        removeTagButton.setOnClickListener {
+            Log.i("currentTagId", currentTagId.toString())
+            if (currentTagId!=-1){
+                if(imageTitleList[currentImageId].tags.size!=0){
+                    var remove_val=imageTitleList[currentImageId].tags.get(selected)
+                    imageTitleList[currentImageId].tags.remove(remove_val)
+                    annotations.remove(remove_val)
+                    tagRemoving=true
+                    annotationlistAdapter.notifyDataSetChanged()
+                    drawCanvas.invalidate()
+
+                    //searchHash 작업도 추가할 것
+                }
             }
         }
     }
